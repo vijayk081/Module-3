@@ -13,6 +13,7 @@
   },
   "externals": {},
   "localizedResources": {
-    "EmployeeListingWebPartStrings": "lib/webparts/employeeListing/loc/{locale}.js"
+    "EmployeeListingWebPartStrings": "lib/webparts/employeeListing/loc/{locale}.js",
+    "ControlStrings": "node_modules/@pnp/spfx-controls-react/lib/loc/{locale}.js"
   }
 }

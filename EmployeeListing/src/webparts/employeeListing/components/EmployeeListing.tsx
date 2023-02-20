@@ -11,11 +11,12 @@ import { mergeStyles } from 'office-ui-fabric-react/lib/Styling';
 import { Announced } from 'office-ui-fabric-react/lib/Announced';
 import { DefaultButton, PrimaryButton } from '@fluentui/react/lib/Button';
 import { Dialog, DialogFooter } from '@fluentui/react/lib/Dialog';
+import { PeoplePicker, PrincipalType } from "@pnp/spfx-controls-react/lib/PeoplePicker";
 import { sp } from "@pnp/sp/presets/all";
 import "@pnp/sp/webs"
 import "@pnp/sp/lists";
 import "@pnp/sp/items";
-import {  Icon } from '@fluentui/react';
+import { Icon } from '@fluentui/react';
 import { DatePicker, Dropdown, IDropdownOption } from 'office-ui-fabric-react';
 import * as moment from 'moment';
 // DatePicker,
@@ -35,9 +36,11 @@ export interface IDetailsListBasicExampleItem {
   ID: number;
   Name1: string;
   DOB: any;
+  Manager: any[];
   Experience: number;
   Department: string;
-  DepartmentId:any;
+  DepartmentId: any;
+  ManagerId:any;
 }
 
 
@@ -50,19 +53,23 @@ export interface IDetailsListBasicExampleState {
   text: string;
   Name1: any;
   ItemId: any;
-  Name1up: any;
-  DepartmentId:any;
+  Manager: [];
+  EMail: any[];
+  DepartmentId: any;
+  ManagerId:any;
   DOB: any;
-  DOBup: any;
+  plpuser: any[];
   Department: any;
   SelectedItem: any;
+  SelectedManager:any;
+  selectedusers: string[];
   Experience: any;
-  Experienceup: any;
   hideDialog: boolean;
   projectlookupvalues: IDropdownOption[];
   hideDialogup: boolean;
   EditMode: boolean,
   SelectedItemup: any,
+  selectedItems: any,
 
 
 
@@ -89,22 +96,26 @@ export default class EmployeeListing extends React.Component<IEmployeeListingPro
       announcedMessage: undefined,
       FilterData: [],
       id: '',
+      plpuser: [],
       ItemId: [],
-      DepartmentId:'',
+      DepartmentId: '',
+      ManagerId:'',
       SelectedItem: 0,
+      SelectedManager:[],
+      selectedusers: [],
       text: 'string',
+      Manager:[],
       Name1: '',
-      Name1up: '',
       DOB: null,
-      DOBup: null,
       Department: '',
+      EMail: [],
       projectlookupvalues: [],
       Experience: '',
-      Experienceup: '',
       hideDialog: true,
       hideDialogup: true,
       EditMode: false,
       SelectedItemup: '',
+      selectedItems: [],
 
     };
     this._getdeplookupfield();
@@ -121,6 +132,8 @@ export default class EmployeeListing extends React.Component<IEmployeeListingPro
       { key: 'column4', name: 'DOB', fieldName: 'DOB', minWidth: 100, maxWidth: 200, isResizable: true },
       { key: 'column5', name: 'Experience', fieldName: 'Experience', minWidth: 100, maxWidth: 200, isResizable: true },
       { key: 'column6', name: 'Department', fieldName: 'Department', minWidth: 100, maxWidth: 200, isResizable: true },
+      { key: 'column7', name: 'Manager', fieldName: 'Manager', minWidth: 100, maxWidth: 200, isResizable: true },
+
     ];
 
 
@@ -144,7 +157,7 @@ export default class EmployeeListing extends React.Component<IEmployeeListingPro
           />
 
           <Announced message={`Number of items after filter applied: ${items.length}.`} />
-          <PrimaryButton text="Add Employee" onClick={() => { this.setState({ hideDialog: false , EditMode: false }) }} />
+          <PrimaryButton text="Add Employee" onClick={() => { this.setState({ hideDialog: false, EditMode: false }) }} />
           <MarqueeSelection selection={this._selection}>
             <DetailsList
               items={this.state.items}
@@ -159,7 +172,6 @@ export default class EmployeeListing extends React.Component<IEmployeeListingPro
               onItemInvoked={this._onItemInvoked}
             />
           </MarqueeSelection>
-
         </Fabric>
         <div className='adddialog'>
           <Dialog
@@ -180,12 +192,11 @@ export default class EmployeeListing extends React.Component<IEmployeeListingPro
                     DOB :
                   </td>
                   <td>
-                  <DatePicker id="DOB"
-                      value={new Date(this.state.DOB)}
+                    <DatePicker id="DOB"
+                      value={this.state.DOB ? new Date(this.state.DOB) : null}
                       onSelectDate={(selectedDate) => {
                         this.setState({ DOB: selectedDate });
                       }} />
-                    {/* <input type="date" id="DOB" value={this.state.DOB ? this.state.DOB : ''} onChange={(e) => { this.setState({ DOB: e.target.value }); }} /> */}
                   </td>
                 </tr>
                 <tr className='Experience'>
@@ -193,7 +204,7 @@ export default class EmployeeListing extends React.Component<IEmployeeListingPro
                     Experience :
                   </td>
                   <td>
-                    <input type="number" id="Experience" value={this.state.Experience ? this.state.Experience :''} onChange={(e) => { this.setState({ Experience: e.target.value }); }} />
+                    <input type="number" id="Experience" value={this.state.Experience ? this.state.Experience : ''} onChange={(e) => { this.setState({ Experience: e.target.value }); }} />
                   </td>
                 </tr>
                 <tr className='Department'>
@@ -205,10 +216,30 @@ export default class EmployeeListing extends React.Component<IEmployeeListingPro
                     <Dropdown placeholder="Select a Department" options={this.state.projectlookupvalues} defaultSelectedKey={this.state.SelectedItemup} onChange={(e, val) => { this.onDropdownchange(e, val) }} ></Dropdown>
                   </td>
                 </tr>
+                <tr className='Manager'>
+                  <td>
+                    Manager:
+                  </td>
+                  <td>
+                    <PeoplePicker
+                      context={this.props.spfxcontext}
+                      personSelectionLimit={3}
+                      showtooltip={true}
+                      required={true}
+                      disabled={false}
+                      defaultSelectedUsers={this.state.selectedusers}
+                      onChange={this._getPeoplePicker}
+                      showHiddenInUI={false}
+                      ensureUser={true}
+                      principalTypes={[PrincipalType.User]}
+                      resolveDelay={1000} />
+                  </td>
+
+                </tr>
               </table>
             </div>
             <DialogFooter>
-              <PrimaryButton  onClick={() => { this.state.EditMode ? this.updatedialog() : this.createItem()  }} >{this.state.EditMode ? "Update" : "Save"} </PrimaryButton>
+              <PrimaryButton onClick={() => { this.state.EditMode ? this.updatedialog() : this.createItem() }} >{this.state.EditMode ? "Update" : "Save"} </PrimaryButton>
               <DefaultButton text="Cancel" onClick={() => { this.setState({ hideDialog: true }), this.reset() }} />
             </DialogFooter>
           </Dialog>
@@ -216,8 +247,8 @@ export default class EmployeeListing extends React.Component<IEmployeeListingPro
             <text>
               Are you sure want to update details?
             </text>
-          <DialogFooter>
-              <PrimaryButton text="yes" onClick={() =>  this.UpdateItem(this.state.ItemId)} />
+            <DialogFooter>
+              <PrimaryButton text="yes" onClick={() => this.UpdateItem(this.state.ItemId)} />
               <DefaultButton text="No" onClick={() => { this.setState({ hideDialogup: true }), this.reset() }} />
             </DialogFooter>
           </Dialog>
@@ -277,15 +308,15 @@ export default class EmployeeListing extends React.Component<IEmployeeListingPro
     );
   }
 
-  public updatedialog= async () =>{
+  public updatedialog = async () => {
     this.setState({
-      hideDialogup:false,
+      hideDialogup: false,
     })
   }
 
   public onDropdownchange(event: React.FormEvent<HTMLDivElement>, item: IDropdownOption) {
     console.log();
-    this.setState({ SelectedItem: item.key , SelectedItemup: item.key })
+    this.setState({ SelectedItem: item.key, SelectedItemup: item.key })
   }
 
   public componentDidMount = () => {
@@ -293,11 +324,18 @@ export default class EmployeeListing extends React.Component<IEmployeeListingPro
     this._getdeplookupfield();
   }
   public test = async () => {
-    await sp.web.lists.getByTitle("Employees").items.select("ID,Name1,DOB,Experience,Department/ID,Department/DepartmentName").expand("Department").get().then(items => {
+    await sp.web.lists.getByTitle("Employees").items.select("ID,Name1,DOB,Experience,Department/ID,Department/DepartmentName,Manager/ID,Manager/EMail").expand("Department,Manager").get().then(items => {
 
-      let AllData: { Action: any; ID: any; Name1: any; DOB: any; Experience: number; Department: any; DepartmentId:any;}[] = [];
+      let AllData: { Action: any; ID: any; Name1: any; DOB: any; Experience: number; Department: any; DepartmentId: any; Manager: any; ManagerId:any;}[] = [];    // Manager: any;
       items.map((data) => {
         let dataDOB = moment(data.DOB).format('MM/DD/YYYY');
+
+        let Allusers: any[] = [];
+        data.Manager.map((val: any) => {
+          Allusers.push(val.EMail)
+        })
+
+
 
         AllData.push({
           ID: data.ID,
@@ -305,7 +343,9 @@ export default class EmployeeListing extends React.Component<IEmployeeListingPro
           DOB: dataDOB,
           Department: data.Department.DepartmentName,
           Experience: data.Experience,
-          DepartmentId:data.Department.ID,
+          Manager: Allusers,
+          DepartmentId: data.Department.ID,
+          ManagerId:data.Manager.ID,
           Action: (
             <>
               <Icon
@@ -328,20 +368,28 @@ export default class EmployeeListing extends React.Component<IEmployeeListingPro
     })
   }
 
-  //for combination of dialog
-    public reset = async() =>{
-      this.setState({ Name1:'',DOB:null,Experience:'',SelectedItemup:0 })
-    }
+// People picker
+  private _getPeoplePicker = (plpUser: any) => {
+    let AllManager: any[] = [];
+    plpUser.map((val: any) => {
+      AllManager.push(val.id)
+    })
+    this.setState({ plpuser: AllManager });
+  }
 
+  //for combination of dialog
+  public reset = async () => {
+    this.setState({ Name1: '', DOB: null, Experience: '', SelectedItemup: 0 })
+  }
   // create item
   public createItem = async () => {
-
     sp.web.lists.getByTitle("Employees")
       .items.add({
         Name1: this.state.Name1,
         DOB: this.state.DOB,
         Experience: this.state.Experience,
         DepartmentId: this.state.SelectedItem,
+        ManagerId: { results: this.state.plpuser }
 
       }).then(() => {
         this.setState({ hideDialog: true })
@@ -368,14 +416,17 @@ export default class EmployeeListing extends React.Component<IEmployeeListingPro
       Name1: editItem.Name1,
       DOB: editItem.DOB,
       Experience: editItem.Experience,
+      Manager:editItem.ManagerId,
       ItemId: editItem.ID,
       Department: editItem.Department,
-      SelectedItemup:editItem.DepartmentId,
+      SelectedItemup: editItem.DepartmentId,
+      selectedusers:editItem.Manager,
+      // ManagerId:editItem.ManagerId,
       hideDialog: false,
       EditMode: true
     });
   }
-  
+
   public UpdateItem = async (ItemId: any) => {
     sp.web.lists.getByTitle("Employees").items.getById(ItemId)
       .update({
@@ -383,12 +434,12 @@ export default class EmployeeListing extends React.Component<IEmployeeListingPro
         DOB: this.state.DOB,
         Experience: this.state.Experience,
         DepartmentId: this.state.SelectedItemup,
-
+        ManagerId: { results: this.state.plpuser }
       }).then(() => {
         // location.reload();
-        this.setState({ hideDialogup: true, hideDialog:true });
+        this.setState({ hideDialogup: true, hideDialog: true });
         this.reset(),
-        this.test();
+          this.test();
       })
       .catch((err) => {
         console.log(err);
@@ -404,8 +455,6 @@ export default class EmployeeListing extends React.Component<IEmployeeListingPro
     this.setState({
       projectlookupvalues: dropdowndep
     });
-
-
   }
 
   private _getSelectionDetails(): string {
@@ -424,7 +473,7 @@ export default class EmployeeListing extends React.Component<IEmployeeListingPro
   private _onItemInvoked = (item: IDetailsListBasicExampleItem): void => {
     alert(`Item invoked: ${item.Name1}`);
   };
-  
+
   private _onFilter = (ev: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, text: string): void => {
     this.setState({
       items: text ? this.state.FilterData.filter(i => i.Name1.toLowerCase().indexOf(text) > -1) : this.state.FilterData,
