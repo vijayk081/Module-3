@@ -73,13 +73,6 @@ export interface IDetailsListBasicExampleState {
 export default class EmployeeListing extends React.Component<IEmployeeListingProps, IDetailsListBasicExampleState> {
   private _selection: Selection;
   private _columns: IColumn[];
-  // Name1: string;
-  // DOB: string;
-  // Experience: string;
-  // Department: string;
-  // Manager: string;
-
-
 
   constructor(props: IEmployeeListingProps) {
     super(props);
