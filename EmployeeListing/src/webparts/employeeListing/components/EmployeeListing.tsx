@@ -1,8 +1,6 @@
 import * as React from 'react';
-
-// import styles from './EmployeeListing.module.scss';
 import { IEmployeeListingProps } from './IEmployeeListingProps';
-// import { escape } from '@microsoft/sp-lodash-subset';
+import "@pnp/sp/site-groups";
 import { TextField, ITextFieldStyles } from 'office-ui-fabric-react/lib/TextField';
 import { DetailsList, DetailsListLayoutMode, Selection, IColumn } from 'office-ui-fabric-react/lib/DetailsList';
 import { MarqueeSelection } from 'office-ui-fabric-react/lib/MarqueeSelection';
@@ -19,17 +17,11 @@ import "@pnp/sp/items";
 import { Icon } from '@fluentui/react';
 import { DatePicker, Dropdown, IDropdownOption } from 'office-ui-fabric-react';
 import * as moment from 'moment';
-// DatePicker,
-// import { Dropdown, DropdownMenuItemType, IDropdownOption, IDropdownProps } from '@fluentui/react/lib/Dropdown';
-
-// import { Fabric } from 'office-ui-fabric-react';
-
 
 const exampleChildClass = mergeStyles({
   display: 'block',
   marginBottom: '10px',
 });
-
 
 const textFieldStyles: Partial<ITextFieldStyles> = { root: { maxWidth: '300px' } };
 export interface IDetailsListBasicExampleItem {
@@ -40,7 +32,7 @@ export interface IDetailsListBasicExampleItem {
   Experience: number;
   Department: string;
   DepartmentId: any;
-  ManagerId:any;
+  ManagerId: any;
 }
 
 
@@ -56,12 +48,12 @@ export interface IDetailsListBasicExampleState {
   Manager: [];
   EMail: any[];
   DepartmentId: any;
-  ManagerId:any;
+  ManagerId: any;
   DOB: any;
   plpuser: any[];
   Department: any;
   SelectedItem: any;
-  SelectedManager:any;
+  SelectedManager: any;
   selectedusers: string[];
   Experience: any;
   hideDialog: boolean;
@@ -70,16 +62,22 @@ export interface IDetailsListBasicExampleState {
   EditMode: boolean,
   SelectedItemup: any,
   selectedItems: any,
-
-
-
+  UserEmail: any,
+  hidebtn: boolean,
+  hidebtnn: boolean,
+  gusers: any,
+  checkFields: boolean,
 }
-
 
 
 export default class EmployeeListing extends React.Component<IEmployeeListingProps, IDetailsListBasicExampleState> {
   private _selection: Selection;
   private _columns: IColumn[];
+  // Name1: string;
+  // DOB: string;
+  // Experience: string;
+  // Department: string;
+  // Manager: string;
 
 
 
@@ -99,12 +97,12 @@ export default class EmployeeListing extends React.Component<IEmployeeListingPro
       plpuser: [],
       ItemId: [],
       DepartmentId: '',
-      ManagerId:'',
+      ManagerId: '',
       SelectedItem: 0,
-      SelectedManager:[],
+      SelectedManager: [],
       selectedusers: [],
       text: 'string',
-      Manager:[],
+      Manager: [],
       Name1: '',
       DOB: null,
       Department: '',
@@ -116,10 +114,16 @@ export default class EmployeeListing extends React.Component<IEmployeeListingPro
       EditMode: false,
       SelectedItemup: '',
       selectedItems: [],
+      UserEmail: [],
+      hidebtn: true,
+      hidebtnn: true,
+      gusers: [],
+      checkFields: true,
 
     };
-    this._getdeplookupfield();
+    
 
+    this._getdeplookupfield();
     this._selection = new Selection({
       onSelectionChanged: () => this.setState({ selectionDetails: this._getSelectionDetails() }),
     });
@@ -139,11 +143,11 @@ export default class EmployeeListing extends React.Component<IEmployeeListingPro
 
   }
 
+ 
 
   render(): React.ReactElement<IEmployeeListingProps> {
+
     const { items, selectionDetails } = this.state;
-
-
     return (
       <div>
         <Fabric>
@@ -155,9 +159,13 @@ export default class EmployeeListing extends React.Component<IEmployeeListingPro
             onChange={this._onFilter}
             styles={textFieldStyles}
           />
-
           <Announced message={`Number of items after filter applied: ${items.length}.`} />
-          <PrimaryButton text="Add Employee" onClick={() => { this.setState({ hideDialog: false, EditMode: false }) }} />
+          {
+            this.state.hidebtn == false && (
+              <PrimaryButton text="Add Employee" onClick={() => { this.reset(), this.setState({ hideDialog: false, EditMode: false }) }} />
+            )
+
+          }
           <MarqueeSelection selection={this._selection}>
             <DetailsList
               items={this.state.items}
@@ -184,7 +192,12 @@ export default class EmployeeListing extends React.Component<IEmployeeListingPro
                     Name :
                   </td>
                   <td>
-                    <input type="text" id="Name1" value={this.state.Name1 ? this.state.Name1 : ''} onChange={(e) => { this.setState({ Name1: e.target.value }); }} />
+                    <input type="text" id="Name1" value={this.state.Name1 ? this.state.Name1 : ''} onChange={(e) => { this.setState({ Name1: e.target.value }, ()=> this.hidefunc()); }}
+                    />
+                    {this.state.checkFields == false && (
+                         <div style={{ color: "#F61C04" }}>Name is Not Valid</div>
+                    )}
+
                   </td>
                 </tr>
                 <tr className='DOB'>
@@ -196,7 +209,7 @@ export default class EmployeeListing extends React.Component<IEmployeeListingPro
                       value={this.state.DOB ? new Date(this.state.DOB) : null}
                       onSelectDate={(selectedDate) => {
                         this.setState({ DOB: selectedDate });
-                      }} />
+                      }} isRequired />
                   </td>
                 </tr>
                 <tr className='Experience'>
@@ -204,12 +217,14 @@ export default class EmployeeListing extends React.Component<IEmployeeListingPro
                     Experience :
                   </td>
                   <td>
-                    <input type="number" id="Experience" value={this.state.Experience ? this.state.Experience : ''} onChange={(e) => { this.setState({ Experience: e.target.value }); }} />
+                    <input type="number" min='0' max={100}
+                      required
+                      pattern="^[0-9]{1,2}[:.,-]?$" id="Experience" value={this.state.Experience ? this.state.Experience : ''} onChange={(e) => { this.setState({ Experience: e.target.value },()=> this.hidefunc());}} />
                   </td>
                 </tr>
                 <tr className='Department'>
                   <td>
-                    Department :
+                    Department:
                   </td>
                   <td>
 
@@ -223,89 +238,125 @@ export default class EmployeeListing extends React.Component<IEmployeeListingPro
                   <td>
                     <PeoplePicker
                       context={this.props.spfxcontext}
-                      personSelectionLimit={3}
+                      personSelectionLimit={5}
                       showtooltip={true}
                       required={true}
                       disabled={false}
                       defaultSelectedUsers={this.state.selectedusers}
-                      onChange={this._getPeoplePicker}
+                      onChange={this.getPeoplePicker}
                       showHiddenInUI={false}
                       ensureUser={true}
                       principalTypes={[PrincipalType.User]}
                       resolveDelay={1000} />
                   </td>
-
                 </tr>
               </table>
             </div>
             <DialogFooter>
-              <PrimaryButton onClick={() => { this.state.EditMode ? this.updatedialog() : this.createItem() }} >{this.state.EditMode ? "Update" : "Save"} </PrimaryButton>
-              <DefaultButton text="Cancel" onClick={() => { this.setState({ hideDialog: true }), this.reset() }} />
+            {
+              (this.state.Name1 != "" && this.state.DOB != null && this.state.Experience != "" && this.state.SelectedItemup != 0 && this.state.plpuser.length > 0  )
+               && (
+              <PrimaryButton  onClick={() => { this.state.EditMode ? this.onChangeCheckFieldsup() : this.onChangeCheckFields() }}>{this.state.EditMode ? "Update" : "Save"} </PrimaryButton>
+               )}
+                <DefaultButton text="Cancel" onClick={() => { this.setState({ hideDialog: true }), this.reset() }} />
             </DialogFooter>
           </Dialog>
+
           <Dialog hidden={this.state.hideDialogup}  >
             <text>
               Are you sure want to update details?
             </text>
             <DialogFooter>
               <PrimaryButton text="yes" onClick={() => this.UpdateItem(this.state.ItemId)} />
-              <DefaultButton text="No" onClick={() => { this.setState({ hideDialogup: true }), this.reset() }} />
+              <DefaultButton text="No" onClick={() => { this.setState({ hideDialogup: true }) }} />
             </DialogFooter>
           </Dialog>
         </div>
-
-        {/* <div className='updialog'>
-          <Dialog
-            hidden={this.state.hideDialogup}>
-            <h1>update</h1>
-            <div className='table'>
-              <table>
-                <tr className='Name1up'>
-                  <td>
-                    Name :
-                  </td>
-                  <td>
-                    <input type="text" id="Name1" value={this.state.Name1 ? this.state.Name1 : ''} onChange={(e) => { this.setState({ Name1: e.target.value }); }} />
-                  </td>
-                </tr>
-                <tr className='DOBup'>
-                  <td>
-                    DOB :
-                  </td>
-                  <td>
-                    <DatePicker id="DOBup"
-                      value={new Date(this.state.DOB)}
-                      onSelectDate={(selectedDate) => {
-                        this.setState({ DOB: selectedDate });
-                      }} />
-                  </td>
-                </tr>
-                <tr className='Experienceup'>
-                  <td>
-                    Experience :
-                  </td>
-                  <td>
-                    <input type="number" id="Experienceup" value={this.state.Experience ? this.state.Experience : ''} onChange={(e) => { this.setState({ Experience: e.target.value }); }} />
-                  </td>
-                </tr>
-                <tr className='Department'>
-                  <td>
-                    Department :
-                  </td>
-                  <td>
-                    <Dropdown placeholder="Select a Department" options={this.state.projectlookupvalues} defaultSelectedKey={this.state.SelectedItemup} onChange={(e, val) => { this.onDropdownchange(e, val) }} ></Dropdown>
-                  </td>
-                </tr>
-              </table>
-            </div>
-            <DialogFooter>
-              <PrimaryButton text="Update" onClick={() => { this.UpdateItem(this.state.ItemId) }} />
-              <DefaultButton text="Cancel" onClick={() => { this.setState({ hideDialogup: true }) }} />
-            </DialogFooter>
-          </Dialog>
-        </div> */}
       </div>
     );
+  }
+
+
+  public hidefunc = async () => {
+  if (this.state.Name1 != "" && this.state.DOB != null &&this.state.Experience != "" && this.state.SelectedItemup != 0 && this.state.plpuser.length > 0){
+    this.setState({hidebtnn:false})
+  }
+  else{
+    this.setState({hidebtnn: true})
+  }
+}
+
+
+  // validation  for add employee
+  // ^[A-Za-z0-9 ]+$
+  public onChangeCheckFields = () => {
+    let pattern = new RegExp("^[a-zA-Z0-9 ]+$");
+    let isValid = pattern.test(this.state.Name1);
+    if (isValid) {
+      this.setState({ checkFields: true });
+      this.hidefunc();
+      this.createItem();
+    } else {
+      this.setState({ checkFields: false }, () => { });
+    }
+  };
+
+  // validation for update 
+
+  public onChangeCheckFieldsup = () => {
+    let pattern = new RegExp("^[a-zA-Z0-9 ]+$");
+    let isValid = pattern.test(this.state.Name1);
+    if (isValid) {
+      this.setState({ checkFields: true });
+      this.hidefunc();
+      this.updatedialog();
+    } else {
+      this.setState({ checkFields: false }, () => { });
+    }
+  };
+
+
+  // available users in group
+  public Groupuser = async () => {
+    const groupId = 20;
+    let users = await sp.web.siteGroups.getById(groupId).users();
+    users.forEach((item) => {
+      if (item.Email.toLowerCase() == this.state.UserEmail.toLowerCase()) {
+        this.setState({ hidebtn: false })
+      }
+    })
+    this.setState({
+      gusers: users,
+    })
+
+    // .then(cur => {
+    //   console.log(cur)
+    // });
+    console.log(users);
+
+  }
+  // current logedin user 
+  public async getcurrentuser(): Promise<any> {
+    const currentuser = await sp.profiles.userProfile;
+    this.setState({
+      UserEmail: currentuser.SipAddress,
+    },
+      () => { this.Groupuser() })
+    console.log(currentuser);
+  }
+
+  // Mail using pnpjs
+  public sendemail = async () => {
+    let addressString: string = await sp.utility.getCurrentUserEmailAddresses();
+
+    await sp.utility.sendEmail({
+      To: [addressString],
+      Subject: "New Employee added...",
+      Body: "<b>New Employee added...</b>",
+      AdditionalHeaders: {
+        "content-type": "text/html"
+      },
+    });
   }
 
   public updatedialog = async () => {
@@ -321,12 +372,13 @@ export default class EmployeeListing extends React.Component<IEmployeeListingPro
 
   public componentDidMount = () => {
     this.test();
+    this.getcurrentuser();
     this._getdeplookupfield();
   }
   public test = async () => {
     await sp.web.lists.getByTitle("Employees").items.select("ID,Name1,DOB,Experience,Department/ID,Department/DepartmentName,Manager/ID,Manager/EMail").expand("Department,Manager").get().then(items => {
 
-      let AllData: { Action: any; ID: any; Name1: any; DOB: any; Experience: number; Department: any; DepartmentId: any; Manager: any; ManagerId:any;}[] = [];    // Manager: any;
+      let AllData: { Action: any; ID: any; Name1: any; DOB: any; Experience: number; Department: any; DepartmentId: any; Manager: any; ManagerId: any; }[] = [];    // Manager: any;
       items.map((data) => {
         let dataDOB = moment(data.DOB).format('MM/DD/YYYY');
 
@@ -334,8 +386,6 @@ export default class EmployeeListing extends React.Component<IEmployeeListingPro
         data.Manager.map((val: any) => {
           Allusers.push(val.EMail)
         })
-
-
 
         AllData.push({
           ID: data.ID,
@@ -345,7 +395,7 @@ export default class EmployeeListing extends React.Component<IEmployeeListingPro
           Experience: data.Experience,
           Manager: Allusers,
           DepartmentId: data.Department.ID,
-          ManagerId:data.Manager.ID,
+          ManagerId: data.Manager.ID,
           Action: (
             <>
               <Icon
@@ -368,18 +418,17 @@ export default class EmployeeListing extends React.Component<IEmployeeListingPro
     })
   }
 
-// People picker
-  private _getPeoplePicker = (plpUser: any) => {
+  // People picker
+  private getPeoplePicker = (plpUser: any) => {
     let AllManager: any[] = [];
     plpUser.map((val: any) => {
       AllManager.push(val.id)
     })
     this.setState({ plpuser: AllManager });
   }
-
   //for combination of dialog
   public reset = async () => {
-    this.setState({ Name1: '', DOB: null, Experience: '', SelectedItemup: 0 })
+    this.setState({ Name1: '', DOB: null, Experience: '', SelectedItemup: 0, selectedusers: [] })
   }
   // create item
   public createItem = async () => {
@@ -394,12 +443,12 @@ export default class EmployeeListing extends React.Component<IEmployeeListingPro
       }).then(() => {
         this.setState({ hideDialog: true })
         this.test()
+        this.sendemail()
 
       }).catch((err) => {
         console.log(err);
       });
   }
-
   private _onclickdelete = async (ID: any) => {
     console.log(ID);
     await sp.web.lists.getByTitle("Employees").items.getById(ID).delete().then((data) => {
@@ -416,12 +465,11 @@ export default class EmployeeListing extends React.Component<IEmployeeListingPro
       Name1: editItem.Name1,
       DOB: editItem.DOB,
       Experience: editItem.Experience,
-      Manager:editItem.ManagerId,
+      Manager: editItem.ManagerId,
       ItemId: editItem.ID,
       Department: editItem.Department,
       SelectedItemup: editItem.DepartmentId,
-      selectedusers:editItem.Manager,
-      // ManagerId:editItem.ManagerId,
+      selectedusers: editItem.Manager,
       hideDialog: false,
       EditMode: true
     });
@@ -439,6 +487,7 @@ export default class EmployeeListing extends React.Component<IEmployeeListingPro
         // location.reload();
         this.setState({ hideDialogup: true, hideDialog: true });
         this.reset(),
+
           this.test();
       })
       .catch((err) => {
@@ -508,3 +557,5 @@ function _copyAndSort<T>(items: T[], columnKey: string, isSortedDescending?: boo
   const key = columnKey as keyof T;
   return items.slice(0).sort((a: T, b: T) => ((isSortedDescending ? a[key] < b[key] : a[key] > b[key]) ? 1 : -1));
 }
+
+
