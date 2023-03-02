@@ -59,7 +59,10 @@ import { mergeStyles } from 'office-ui-fabric-react/lib/Styling';
 import { Announced } from 'office-ui-fabric-react/lib/Announced';
 import { DefaultButton, PrimaryButton } from '@fluentui/react/lib/Button';
 import { Dialog, DialogFooter } from '@fluentui/react/lib/Dialog';
+<<<<<<< Updated upstream
 import { PeoplePicker, PrincipalType } from "@pnp/spfx-controls-react/lib/PeoplePicker";
+=======
+>>>>>>> Stashed changes
 import { sp } from "@pnp/sp/presets/all";
 import "@pnp/sp/webs";
 import "@pnp/sp/lists";
@@ -95,6 +98,7 @@ var EmployeeListing = /** @class */ (function (_super) {
             var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
+<<<<<<< Updated upstream
                     case 0: return [4 /*yield*/, sp.web.lists.getByTitle("Employees").items.select("ID,Name1,DOB,Experience,Department/ID,Department/DepartmentName,Manager/ID,Manager/EMail").expand("Department,Manager").get().then(function (items) {
                             var AllData = []; // Manager: any;
                             items.map(function (data) {
@@ -103,15 +107,25 @@ var EmployeeListing = /** @class */ (function (_super) {
                                 data.Manager.map(function (val) {
                                     Allusers.push(val.EMail);
                                 });
+=======
+                    case 0: return [4 /*yield*/, sp.web.lists.getByTitle("Employees").items.select("ID,Name1,DOB,Experience,Department/ID,Department/DepartmentName").expand("Department").get().then(function (items) {
+                            var AllData = [];
+                            items.map(function (data) {
+                                var dataDOB = moment(data.DOB).format('MM/DD/YYYY');
+>>>>>>> Stashed changes
                                 AllData.push({
                                     ID: data.ID,
                                     Name1: data.Name1,
                                     DOB: dataDOB,
                                     Department: data.Department.DepartmentName,
                                     Experience: data.Experience,
+<<<<<<< Updated upstream
                                     Manager: Allusers,
                                     DepartmentId: data.Department.ID,
                                     ManagerId: data.Manager.ID,
+=======
+                                    DepartmentId: data.Department.ID,
+>>>>>>> Stashed changes
                                     Action: (React.createElement(React.Fragment, null,
                                         React.createElement(Icon, { iconName: 'delete', onClick: function () { _this._onclickdelete(data.ID); }, style: { marginRight: 30 } }),
                                         React.createElement(Icon, { iconName: 'EditSolid12', onClick: function () { _this.editModeItems(data.ID); } })))
@@ -131,6 +145,7 @@ var EmployeeListing = /** @class */ (function (_super) {
                 }
             });
         }); };
+<<<<<<< Updated upstream
         // People picker
         _this._getPeoplePicker = function (plpUser) {
             var AllManager = [];
@@ -139,6 +154,8 @@ var EmployeeListing = /** @class */ (function (_super) {
             });
             _this.setState({ plpuser: AllManager });
         };
+=======
+>>>>>>> Stashed changes
         //for combination of dialog
         _this.reset = function () { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
@@ -156,7 +173,10 @@ var EmployeeListing = /** @class */ (function (_super) {
                     DOB: this.state.DOB,
                     Experience: this.state.Experience,
                     DepartmentId: this.state.SelectedItem,
+<<<<<<< Updated upstream
                     ManagerId: { results: this.state.plpuser }
+=======
+>>>>>>> Stashed changes
                 }).then(function () {
                     _this.setState({ hideDialog: true });
                     _this.test();
@@ -190,12 +210,18 @@ var EmployeeListing = /** @class */ (function (_super) {
                 Name1: editItem.Name1,
                 DOB: editItem.DOB,
                 Experience: editItem.Experience,
+<<<<<<< Updated upstream
                 Manager: editItem.ManagerId,
                 ItemId: editItem.ID,
                 Department: editItem.Department,
                 SelectedItemup: editItem.DepartmentId,
                 selectedusers: editItem.Manager,
                 // ManagerId:editItem.ManagerId,
+=======
+                ItemId: editItem.ID,
+                Department: editItem.Department,
+                SelectedItemup: editItem.DepartmentId,
+>>>>>>> Stashed changes
                 hideDialog: false,
                 EditMode: true
             });
@@ -209,7 +235,10 @@ var EmployeeListing = /** @class */ (function (_super) {
                     DOB: this.state.DOB,
                     Experience: this.state.Experience,
                     DepartmentId: this.state.SelectedItemup,
+<<<<<<< Updated upstream
                     ManagerId: { results: this.state.plpuser }
+=======
+>>>>>>> Stashed changes
                 }).then(function () {
                     // location.reload();
                     _this.setState({ hideDialogup: true, hideDialog: true });
@@ -279,6 +308,7 @@ var EmployeeListing = /** @class */ (function (_super) {
             announcedMessage: undefined,
             FilterData: [],
             id: '',
+<<<<<<< Updated upstream
             plpuser: [],
             ItemId: [],
             DepartmentId: '',
@@ -294,11 +324,28 @@ var EmployeeListing = /** @class */ (function (_super) {
             EMail: [],
             projectlookupvalues: [],
             Experience: '',
+=======
+            ItemId: [],
+            DepartmentId: '',
+            SelectedItem: 0,
+            text: 'string',
+            Name1: '',
+            Name1up: '',
+            DOB: null,
+            DOBup: null,
+            Department: '',
+            projectlookupvalues: [],
+            Experience: '',
+            Experienceup: '',
+>>>>>>> Stashed changes
             hideDialog: true,
             hideDialogup: true,
             EditMode: false,
             SelectedItemup: '',
+<<<<<<< Updated upstream
             selectedItems: [],
+=======
+>>>>>>> Stashed changes
         };
         _this._getdeplookupfield();
         _this._selection = new Selection({
@@ -311,7 +358,10 @@ var EmployeeListing = /** @class */ (function (_super) {
             { key: 'column4', name: 'DOB', fieldName: 'DOB', minWidth: 100, maxWidth: 200, isResizable: true },
             { key: 'column5', name: 'Experience', fieldName: 'Experience', minWidth: 100, maxWidth: 200, isResizable: true },
             { key: 'column6', name: 'Department', fieldName: 'Department', minWidth: 100, maxWidth: 200, isResizable: true },
+<<<<<<< Updated upstream
             { key: 'column7', name: 'Manager', fieldName: 'Manager', minWidth: 100, maxWidth: 200, isResizable: true },
+=======
+>>>>>>> Stashed changes
         ];
         return _this;
     }
@@ -339,7 +389,11 @@ var EmployeeListing = /** @class */ (function (_super) {
                             React.createElement("tr", { className: 'DOB' },
                                 React.createElement("td", null, "DOB :"),
                                 React.createElement("td", null,
+<<<<<<< Updated upstream
                                     React.createElement(DatePicker, { id: "DOB", value: this.state.DOB ? new Date(this.state.DOB) : null, onSelectDate: function (selectedDate) {
+=======
+                                    React.createElement(DatePicker, { id: "DOB", value: new Date(this.state.DOB), onSelectDate: function (selectedDate) {
+>>>>>>> Stashed changes
                                             _this.setState({ DOB: selectedDate });
                                         } }))),
                             React.createElement("tr", { className: 'Experience' },
@@ -349,11 +403,15 @@ var EmployeeListing = /** @class */ (function (_super) {
                             React.createElement("tr", { className: 'Department' },
                                 React.createElement("td", null, "Department :"),
                                 React.createElement("td", null,
+<<<<<<< Updated upstream
                                     React.createElement(Dropdown, { placeholder: "Select a Department", options: this.state.projectlookupvalues, defaultSelectedKey: this.state.SelectedItemup, onChange: function (e, val) { _this.onDropdownchange(e, val); } }))),
                             React.createElement("tr", { className: 'Manager' },
                                 React.createElement("td", null, "Manager:"),
                                 React.createElement("td", null,
                                     React.createElement(PeoplePicker, { context: this.props.spfxcontext, personSelectionLimit: 3, showtooltip: true, required: true, disabled: false, defaultSelectedUsers: this.state.selectedusers, onChange: this._getPeoplePicker, showHiddenInUI: false, ensureUser: true, principalTypes: [PrincipalType.User], resolveDelay: 1000 }))))),
+=======
+                                    React.createElement(Dropdown, { placeholder: "Select a Department", options: this.state.projectlookupvalues, defaultSelectedKey: this.state.SelectedItemup, onChange: function (e, val) { _this.onDropdownchange(e, val); } }))))),
+>>>>>>> Stashed changes
                     React.createElement(DialogFooter, null,
                         React.createElement(PrimaryButton, { onClick: function () { _this.state.EditMode ? _this.updatedialog() : _this.createItem(); } },
                             this.state.EditMode ? "Update" : "Save",

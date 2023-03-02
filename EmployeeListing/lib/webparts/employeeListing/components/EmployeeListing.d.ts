@@ -8,11 +8,17 @@ export interface IDetailsListBasicExampleItem {
     ID: number;
     Name1: string;
     DOB: any;
+<<<<<<< Updated upstream
     Manager: any[];
     Experience: number;
     Department: string;
     DepartmentId: any;
     ManagerId: any;
+=======
+    Experience: number;
+    Department: string;
+    DepartmentId: any;
+>>>>>>> Stashed changes
 }
 export interface IDetailsListBasicExampleState {
     items: IDetailsListBasicExampleItem[];
@@ -23,6 +29,7 @@ export interface IDetailsListBasicExampleState {
     text: string;
     Name1: any;
     ItemId: any;
+<<<<<<< Updated upstream
     Manager: [];
     EMail: any[];
     DepartmentId: any;
@@ -34,12 +41,25 @@ export interface IDetailsListBasicExampleState {
     SelectedManager: any;
     selectedusers: string[];
     Experience: any;
+=======
+    Name1up: any;
+    DepartmentId: any;
+    DOB: any;
+    DOBup: any;
+    Department: any;
+    SelectedItem: any;
+    Experience: any;
+    Experienceup: any;
+>>>>>>> Stashed changes
     hideDialog: boolean;
     projectlookupvalues: IDropdownOption[];
     hideDialogup: boolean;
     EditMode: boolean;
     SelectedItemup: any;
+<<<<<<< Updated upstream
     selectedItems: any;
+=======
+>>>>>>> Stashed changes
 }
 export default class EmployeeListing extends React.Component<IEmployeeListingProps, IDetailsListBasicExampleState> {
     private _selection;
@@ -50,7 +70,10 @@ export default class EmployeeListing extends React.Component<IEmployeeListingPro
     onDropdownchange(event: React.FormEvent<HTMLDivElement>, item: IDropdownOption): void;
     componentDidMount: () => void;
     test: () => Promise<void>;
+<<<<<<< Updated upstream
     private _getPeoplePicker;
+=======
+>>>>>>> Stashed changes
     reset: () => Promise<void>;
     createItem: () => Promise<void>;
     private _onclickdelete;

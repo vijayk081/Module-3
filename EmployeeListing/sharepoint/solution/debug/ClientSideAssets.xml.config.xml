@@ -1,1 +1,5 @@
+<<<<<<< Updated upstream
 <?xml version="1.0" encoding="utf-8"?><AppPartConfig xmlns="http://schemas.microsoft.com/sharepoint/2012/app/partconfiguration"><Id>7a207387-caa3-49c8-8bf7-54538796bf18</Id></AppPartConfig>
+=======
+<?xml version="1.0" encoding="utf-8"?><AppPartConfig xmlns="http://schemas.microsoft.com/sharepoint/2012/app/partconfiguration"><Id>56827b12-bc29-433e-a8e6-91f364eef847</Id></AppPartConfig>
+>>>>>>> Stashed changes
